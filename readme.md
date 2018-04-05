@@ -1,6 +1,7 @@
 # DonorsChoose model
 - `load_data.py` holds data loading / preprocessing functions
 - `model.py` is old and should not be used
+- You will need to manually download `test.csv` and `resources.csv`
 # Libraries
 - Keras
 - Numpy
