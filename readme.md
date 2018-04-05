@@ -1,0 +1,25 @@
+# DonorsChoose model
+- `load_data.py` holds data loading / preprocessing functions
+- `model.py` is old and should not be used
+# Libraries
+- Keras
+- Numpy
+- sklearn
+- Pandas
+- Tensorflow backend
+# TODO
+- Write parser / data loader for `resources.csv`
+- Use LSTM for resources?
+- Write the actual model itself
+- Find hyperparameters
+- Dropout vs. L2?
+# Model
+- Residual LSTMs
+- Each sequence data will have 4-8x128 rLSTM (with batch norm? or Bidirectional?)
+- One hot data is 2x64 ReLU + BatchNorm
+- Concatenate all the outputs together and stack on another 2-4x128 ReLU + BatchNorm
+- Final output is 2 unit softmax
+- Not sure if we want to use hinge loss as I've read it optimizes for AUC (which is what we're judged on) or just standard `categorical_crossentropy`
+- We can try Adam and SGD w/momentum
+# Changes
+- I removed all the old format 4 essay ones (~8k) from training, I'm pretty sure we need to create a separate model for those but for now `train.csv.tar.lzma` has only the 2 essay entries
