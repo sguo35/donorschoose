@@ -19,6 +19,9 @@ def load_data(file):
     project_title = []
     essay_1 = []
     essay_2 = []
+    resource = []
+    num_proj = []
+    y = []
 
     for row in train_raw:
         # row[5] is grade category - we're using 1hot encoding here w/4 categories
@@ -47,6 +50,18 @@ def load_data(file):
 
         # row[10] - Essay 2 - char LSTM 1 hot
         essay_2_one_hot = one_hot_string(row[10], 1500)
+        # row[13] - Resource Summary - char LSTM 1 hot
+        resource_one_hot = one_hot_string(row[13], 200)
+        # row[14] - Number of projects approved
+        num_proj_ex = int(row[14])
+        # row[15] - If projected is approved
+        temp_app = int(row[15])
+        # one hot arr for approval
+        y_one_hot = np.zeros(shape=(2), dtype='float32')
+        if temp_app == 1:
+            y_one_hot[0] = 1.
+        else:
+            y_one_hot[1] = 1.
 
         grade_category.append(grade_one_hot)
         subject_category.append(subject_category_one_hot)
@@ -54,7 +69,12 @@ def load_data(file):
         project_title.append(project_title_one_hot)
         essay_1.append(essay_1_one_hot)
         essay_2.append(essay_2_one_hot)
-    return grade_category, subject_category, subject_subcategory, project_title, essay_1, essay_2
+        resource.append(resource_one_hot)
+        num_proj.append(num_proj_ex)
+        y.append(y_one_hot)
+    return grade_category, subject_category, 
+    subject_subcategory, project_title, 
+    essay_1, essay_2, resource, num_proj, y
 
 
 
