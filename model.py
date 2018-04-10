@@ -11,6 +11,7 @@
 
 from keras.layers import CuDNNLSTM, Lambda
 from keras.layers.merge import add
+from keras import regularizers
 
 def make_residual_lstm_layers(input, rnn_width, rnn_depth, rnn_dropout):
     """
@@ -21,12 +22,12 @@ def make_residual_lstm_layers(input, rnn_width, rnn_depth, rnn_dropout):
     x = input
     for i in range(rnn_depth):
         return_sequences = i < rnn_depth - 1
-        x_rnn = LSTM(rnn_width, 
-        recurrent_dropout=rnn_dropout, 
-        dropout=rnn_dropout, 
+        x_rnn = CuDNNLSTM(rnn_width, 
+        # recurrent_dropout=rnn_dropout, 
+        # dropout=rnn_dropout, 
         return_sequences=return_sequences, 
-        implementation=2, 
-        kernel_regularizer=regularizers.l2(0.01))(x)
+        # implementation=2, 
+        kernel_regularizer=regularizers.l2(L2_REGULARIZATION))(x)
 
         if return_sequences:
             # Intermediate layers return sequences, input is also a sequence.
@@ -61,8 +62,8 @@ def get_model():
     # Grade category is shape (4)
     input_grade_category = Input((4))
 
-    # Grade Category network - 1x32 ReLU layer
-    grade_category_network = Dense(32 * MULTIPLIER, activation='relu', kernel_regularizer=regularizers.l2(L2_REGULARIZATION))(input_grade_category)
+    # Grade Category network - 1x64 ReLU layer
+    grade_category_network = Dense(64 * MULTIPLIER, activation='relu', kernel_regularizer=regularizers.l2(L2_REGULARIZATION))(input_grade_category)
 
     # Subject category is 30x72 time series
     input_subject_category = Input((30,72))
@@ -74,22 +75,52 @@ def get_model():
     # subject subcategory is 30x72 time series
     input_subject_subcategory = Input((30, 72))
 
+    # Subject subcategory network
+    # 2x64 rLSTM
+    subject_subcategory_network = make_residual_lstm_layers(input=input_subject_subcategory, rnn_width=64*MULTIPLIER, rnn_depth=2*MULTIPLIER)
+
     # project title is 100x72 time series
     input_project_title = Input((100, 72))
+
+    # Project title network - 2x64 rLSTM
+    project_title_network = make_residual_lstm_layers(input=input_project_title, rnn_width=64*MULTIPLIER, rnn_depth=2*MULTIPLIER)
 
     # essay 1 is 1500x72 time series
     input_essay_1 = Input((1500,72))
 
+    # Essay 1 network - 4x128 rLSTM
+    essay_1_network = make_residual_lstm_layers(input=input_essay_1, rnn_width=128*MULTIPLIER, rnn_depth=4*MULTIPLIER)
+    # downscale the network to 64 units
+    essay_1_network = Dense(64 * MULTIPLIER, activation='relu', kernel_regularizer=regularizers.l2(L2_REGULARIZATION))(essay_1_network)
+
     # essay 2 is 1500x72 time series
     input_essay_2 = Input((1500, 72))
+
+    # essay 2 network - 4x128 rLSTM
+    essay_2_network = make_residual_lstm_layers(input=input_essay_2, rnn_width=128*MULTIPLIER, rnn_depth=4*MULTIPLIER)
+    # downscale the network to 64 units
+    essay_2_network = Dense(64 * MULTIPLIER, activation='relu', kernel_regularization=regularizers.l2(L2_REGULARIZATION))(essay_2_network)
 
     # resource summary is 200x72 time series
     input_resource_summary = Input((200,72))
 
+    # resource summary network - 2x128 rLSTM
+    resource_summary_network = make_residual_lstm_layers(input=input_resource_summary, rnn_width=128*MULTIPLIER, rnn_depth=2*MULTIPLIER)
+    # downscale the network to 64 units
+    resource_summary_network = Dense(64 * MULTIPLIER, activation='relu', kernel_regularization=regularizers.l2(L2_REGULARIZATION))(resource_summary_network)
+
     # number of projects approved is just one input
     input_num_proj_approved = Input((1))
+
+    # not using this for now
+    network = concatenate([grade_category_network, subject_category_network, subject_subcategory_network, project_title_network, essay_1_network,
+    essay_2_network, resource_summary_network])
     
-    predictions = Dense(2, activation="softmax")(x)
+    # Fully connected layer
+    for i in range(1 * MULTIPLIER):
+        network = Dense(64 * MULTIPLIER, activation='relu', kernel_regularization=regularizers.l2(L2_REGULARIZATION))(network)
+
+    predictions = Dense(2, activation="softmax")(network)
     model = Model(inputs=[input_grade_category, 
     input_subject_category, input_subject_subcategory,
     input_project_title, input_essay_1, input_essay_2,
