@@ -134,9 +134,15 @@ def get_model():
 model = get_model()
 from keras.callbacks import *
 
+
+# load the data
+from load_data import load_data
+
+grades, subject_cat, subject_subcat, titles, essays_1, essays_2, resources, num_projs, y = load_data("./train.csv")
+
 reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=5, verbose=1)
 
-history = model.fit([X_train_cat, X_train_num, X_train_words], X_train_target, validation_split=0.1,
+history = model.fit([grades, subject_cat, subject_subcat, titles, essays_1, essays_2, resources], y, validation_split=0.1,
                     verbose=1,
           epochs=100, batch_size=128, callbacks=[reduce_lr])
 model.save('./model.h5')
