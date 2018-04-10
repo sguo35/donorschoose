@@ -1,6 +1,6 @@
 # DonorsChoose model
 - `load_data.py` holds data loading / preprocessing functions
-- `model.py` is old and should not be used
+- `model.py` holds the model definition and training code
 - You will need to manually download `test.csv` and `resources.csv`
 # Libraries
 - Keras
@@ -11,7 +11,7 @@
 # TODO
 - Write parser / data loader for `resources.csv`
 - Use LSTM for resources?
-- Write the actual model itself
+- ~~Write the actual model itself~~
 - Find hyperparameters
 - Dropout vs. L2?
 # Model
