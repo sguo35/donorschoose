@@ -9,7 +9,7 @@
 - Pandas
 - Tensorflow backend
 # TODO
-- Write parser / data loader for `resources.csv`
+- ~~Write parser / data loader for `resources.csv`~~
 - Use LSTM for resources?
 - ~~Write the actual model itself~~
 - Find hyperparameters
