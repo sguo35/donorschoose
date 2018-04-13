@@ -10,7 +10,8 @@ dictionary = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890,.-&
 # Returns arrays as shown below
 def load_data(file):
     # get the raw numpy array
-    train_raw = pd.read_csv(file).values
+    import total_price_data from Dataparser
+    raw_data = total_price_data()
 
     # raw data arrays
     grade_category = []
