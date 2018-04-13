@@ -11,7 +11,7 @@ dictionary = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890,.-&
 def load_data(file):
     # get the raw numpy array
     import total_price_data from Dataparser
-    raw_data = total_price_data()
+    train_raw = total_price_data()
 
     # raw data arrays
     grade_category = []
