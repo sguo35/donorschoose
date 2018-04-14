@@ -11,6 +11,6 @@ print("Got data!")
 
 generator = DataGenerator(pandasFile=data, batch_size=32)
 
-model.fit_generator(generator=generator.gen_data(), use_multiprocessing=True, workers=4, epochs=100, steps_per_epoch=generator.__len__())
+model.fit_generator(generator=generator.gen_data(), use_multiprocessing=False, workers=1, epochs=100, steps_per_epoch=generator.__len__())
 
 model.save('./model.h5')
