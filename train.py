@@ -1,5 +1,5 @@
 # load the data
-from Dataparser import get_data
+from dataParser import get_data
 from keras.models import load_model
 from dataGenerator import DataGenerator
 
