@@ -7,6 +7,7 @@
 - Run `keras model.py` to train. You will need at least 2GB VRAM
 - Change `LSTM` to `CuDNNLSTM` in `model.py`'s `make_residual_lstm` function if you have a GPU with sufficient memory
 - Because loading the entire dataset into memory is impossible unless you have 64GB+ RAM, I currently load 3k entries at a time, randomly selected. You will have to restart training periodically with existing saved model to sample the entire dataset (TODO: fix this)
+- `run.sh` automates this looping
 
 # Libraries
 - Keras
