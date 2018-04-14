@@ -1,4 +1,4 @@
-def total_price_data():
+def get_data():
   import pandas as pd
   import numpy as np
 
@@ -18,5 +18,5 @@ def total_price_data():
   sortedtrain = sortedtrain.reindex(d4.index)
   sortedtrain = sortedtrain.join(d4)
   sortedtrain.reindex(i)
-  sortedtrain = sortedtrain.sample(n=3000, replace=False)
-  return sortedtrain.values
+  #sortedtrain = sortedtrain.sample(n=3000, replace=False)
+  return sortedtrain
