@@ -24,8 +24,10 @@ def load_data(file):
     num_proj = []
     proj_price = []
     y = []
-
+    ct = 0
     for row in train_raw:
+        ct += 1
+        print(ct, end='\r')
         try:
             #print(row)
             if type(row[5]) != float:
@@ -84,9 +86,7 @@ def load_data(file):
 
         except:
             continue
-    return grade_category, subject_category, 
-    subject_subcategory, project_title, 
-    essay_1, essay_2, resource, num_proj, proj_price, y
+    return np.array(grade_category), np.array(subject_category), np.array(subject_subcategory), np.array(project_title), np.array(essay_1), np.array(essay_2), np.array(resource), np.array(num_proj), np.array(proj_price), np.array(y)
 
 
 
