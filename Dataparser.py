@@ -18,4 +18,4 @@ def total_price_data():
   sortedtrain = sortedtrain.reindex(d4.index)
   sortedtrain = sortedtrain.join(d4)
   sortedtrain.reindex(i)
-  return sortedtrain
+  return sortedtrain.values
