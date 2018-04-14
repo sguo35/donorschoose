@@ -9,7 +9,7 @@ model = load_model('./model.h5')
 data = get_data()
 print("Got data!")
 
-generator = DataGenerator(pandasFile=data, batch_size=32)
+generator = DataGenerator(pandasFile=data, batch_size=64)
 
 model.fit_generator(generator=generator.gen_data(), use_multiprocessing=False, workers=1, epochs=5, steps_per_epoch=generator.__len__())
 
