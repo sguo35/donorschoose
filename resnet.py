@@ -99,7 +99,7 @@ def residual_network(x):
     x = add_common_layers(x)
 
     # conv2
-    x = layers.MaxPool1D(pool_size=3, strides=2, padding='same')(x)
+    x = layers.MaxPooling1D(pool_size=3, strides=2, padding='same')(x)
     for i in range(2):
         project_shortcut = True if i == 0 else False
         x = residual_block(x, 64, 64, _project_shortcut=project_shortcut)
