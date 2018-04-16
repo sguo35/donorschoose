@@ -3,7 +3,7 @@ from dataParser import get_data
 from keras.models import load_model
 from dataGenerator import DataGenerator
 
-model = load_model('./model.h5')
+model = load_model('./cnn_model.h5')
 
 # load pandas df
 data = get_data()
