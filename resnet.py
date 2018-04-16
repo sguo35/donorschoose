@@ -24,7 +24,7 @@ img_channels = 3
 #
 
 cardinality = 1
-
+L2_regularizer = 0.01
 
 def residual_network(x):
     """
@@ -40,7 +40,7 @@ def residual_network(x):
     def grouped_convolution(y, nb_channels, _strides):
         # when `cardinality` == 1 this is just a standard convolution
         if cardinality == 1:
-            return layers.Conv1D(nb_channels, kernel_size=3, strides=_strides, padding='same')(y)
+            return layers.Conv1D(nb_channels, kernel_size=3, strides=_strides, padding='same', kernel_regularizer=regularizers.l2(L2_regularizer))(y)
         
         assert not nb_channels % cardinality
         _d = nb_channels // cardinality
@@ -50,7 +50,7 @@ def residual_network(x):
         groups = []
         for j in range(cardinality):
             group = layers.Lambda(lambda z: z[:, :, :, j * _d:j * _d + _d])(y)
-            groups.append(layers.Conv1D(_d, kernel_size=3, strides=_strides, padding='same')(group))
+            groups.append(layers.Conv1D(_d, kernel_size=3, strides=_strides, padding='same', kernel_regularizer=regularizers.l2(L2_regularizer))(group))
             
         # the grouped convolutional layer concatenates them as the outputs of the layer
         y = layers.concatenate(groups)
@@ -68,14 +68,14 @@ def residual_network(x):
         shortcut = y
 
         # we modify the residual building block as a bottleneck design to make the network more economical
-        y = layers.Conv1D(nb_channels_in, kernel_size=1, strides=1, padding='same')(y)
+        y = layers.Conv1D(nb_channels_in, kernel_size=1, strides=1, padding='same', kernel_regularizer=regularizers.l2(L2_regularizer))(y)
         y = add_common_layers(y)
 
         # ResNeXt (identical to ResNet when `cardinality` == 1)
         y = grouped_convolution(y, nb_channels_in, _strides=_strides)
         y = add_common_layers(y)
 
-        y = layers.Conv1D(nb_channels_out, kernel_size=1, strides=1, padding='same')(y)
+        y = layers.Conv1D(nb_channels_out, kernel_size=1, strides=1, padding='same', kernel_regularizer=regularizers.l2(L2_regularizer))(y)
         # batch normalization is employed after aggregating the transformations and before adding to the shortcut
         y = layers.BatchNormalization()(y)
 
@@ -83,7 +83,7 @@ def residual_network(x):
         if _project_shortcut or _strides != 1:
             # when the dimensions increase projection shortcut is used to match dimensions (done by 1×1 convolutions)
             # when the shortcuts go across feature maps of two sizes, they are performed with a stride of 2
-            shortcut = layers.Conv1D(nb_channels_out, kernel_size=1, strides=_strides, padding='same')(shortcut)
+            shortcut = layers.Conv1D(nb_channels_out, kernel_size=1, strides=_strides, padding='same', kernel_regularizer=regularizers.l2(L2_regularizer))(shortcut)
             shortcut = layers.BatchNormalization()(shortcut)
 
         y = layers.add([shortcut, y])
@@ -95,7 +95,7 @@ def residual_network(x):
         return y
 
     # conv1
-    x = layers.Conv1D(64, kernel_size=7, strides=2, padding='same')(x)
+    x = layers.Conv1D(64, kernel_size=7, strides=2, padding='same', kernel_regularizer=regularizers.l2(L2_regularizer))(x)
     x = add_common_layers(x)
 
     # conv2
