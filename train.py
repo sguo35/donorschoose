@@ -9,8 +9,8 @@ model = load_model('./cnn_model.h5')
 # load pandas df
 data = get_data()
 print("Got data!")
-train_data = data[:15000]
-valid_data = data[150001:151001]
+train_data = data[:-1000]
+valid_data = data[-1000:]
 
 import tensorflow as tf
 def auc_roc(y_true, y_pred):
