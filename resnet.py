@@ -25,6 +25,7 @@ img_channels = 3
 
 cardinality = 4
 L2_regularizer = 0.01
+dropout_level = 0.0
 
 def residual_network(x):
     """
@@ -34,7 +35,7 @@ def residual_network(x):
     def add_common_layers(y):
         y = layers.BatchNormalization()(y)
         y = layers.LeakyReLU()(y)
-
+        y = layers.Dropout(dropout_level)(y)
         return y
 
     def grouped_convolution(y, nb_channels, _strides):
