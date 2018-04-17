@@ -36,6 +36,15 @@ clr = CyclicLR(base_lr=0.01, max_lr=0.05,
 from keras.callbacks import ModelCheckpoint
 checkpointer = ModelCheckpoint(filepath='./weights.h5', verbose=1, save_best_only=True)
 
+import keras.backend as K
+# experimental focal loss - see https://arxiv.org/pdf/1708.02002.pdf
+def focal_loss(gamma=2., alpha=.25):
+	def focal_loss_fixed(y_true, y_pred):
+		pt_1 = tf.where(tf.equal(y_true, 1), y_pred, tf.ones_like(y_pred))
+        	pt_0 = tf.where(tf.equal(y_true, 0), y_pred, tf.zeros_like(y_pred))
+        	return -K.sum(alpha * K.pow(1. - pt_1, gamma) * K.log(pt_1))-K.sum((1-alpha) * K.pow( pt_0, gamma) * K.log(1. - pt_0))
+	return focal_loss_fixed
+
 
 generator = DataGenerator(pandasFile=train_data, batch_size=32)
 valid_gen = DataGenerator(pandasFile=valid_data, batch_size=32)
