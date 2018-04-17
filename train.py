@@ -29,12 +29,19 @@ def auc_roc(y_true, y_pred):
     with tf.control_dependencies([update_op]):
         value = tf.identity(value)
         return value
+from cyclicLR import CyclicLR
+clr = CyclicLR(base_lr=0.01, max_lr=0.05,
+                        step_size=200., mode='triangular2')
+
+from keras.callbacks import ModelCheckpoint
+checkpointer = ModelCheckpoint(filepath='./tmp/weights.hdf5', verbose=1, save_best_only=True)
+
 
 generator = DataGenerator(pandasFile=train_data, batch_size=32)
 valid_gen = DataGenerator(pandasFile=valid_data, batch_size=32)
-model.compile(optimizer=optimizers.adam(),
+model.compile(optimizer=optimizers.sgd(nesterov=True, lr=0.01),
               loss='categorical_crossentropy',
               metrics=[auc_roc, 'acc'])
-model.fit_generator(generator=generator.gen_data(), use_multiprocessing=True, workers=4, epochs=5, steps_per_epoch=generator.__len__(), validation_data=valid_gen.gen_data(), validation_steps=valid_gen.__len__())
+model.fit_generator(generator=generator.gen_data(), use_multiprocessing=True, workers=4, epochs=5, steps_per_epoch=generator.__len__(), validation_data=valid_gen.gen_data(), validation_steps=valid_gen.__len__(), callbacks=[clr, checkpointer])
 
 model.save('./model.h5')
