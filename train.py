@@ -34,7 +34,7 @@ clr = CyclicLR(base_lr=0.01, max_lr=0.05,
                         step_size=200., mode='triangular2')
 
 from keras.callbacks import ModelCheckpoint
-checkpointer = ModelCheckpoint(filepath='./tmp/weights.hdf5', verbose=1, save_best_only=True)
+checkpointer = ModelCheckpoint(filepath='./weights.h5', verbose=1, save_best_only=True)
 
 
 generator = DataGenerator(pandasFile=train_data, batch_size=32)
