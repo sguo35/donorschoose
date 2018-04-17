@@ -32,9 +32,9 @@ def auc_roc(y_true, y_pred):
 
 generator = DataGenerator(pandasFile=train_data, batch_size=32)
 valid_gen = DataGenerator(pandasFile=valid_data, batch_size=32)
-model.compile(optimizer=optimizers.adam(clipvalue=1.),
+model.compile(optimizer=optimizers.adam(),
               loss='categorical_crossentropy',
               metrics=[auc_roc, 'acc'])
-model.fit_generator(generator=generator.gen_data(), use_multiprocessing=True, workers=4, epochs=5, steps_per_epoch=generator.__len__(), class_weight={0 : 0.0001,  1: 0.0001}, validation_data=valid_gen.gen_data(), validation_steps=valid_gen.__len__())
+model.fit_generator(generator=generator.gen_data(), use_multiprocessing=True, workers=4, epochs=5, steps_per_epoch=generator.__len__(), validation_data=valid_gen.gen_data(), validation_steps=valid_gen.__len__())
 
 model.save('./model.h5')

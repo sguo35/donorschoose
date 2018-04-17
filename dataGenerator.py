@@ -69,6 +69,7 @@ class DataGenerator():
         y = []
         #ct = 0
         for row in train_raw:
+            #print(row)
             #ct += 1
             #print(ct, end='\r')
             try:
@@ -114,7 +115,7 @@ class DataGenerator():
                         y_one_hot[1] = 1.
 
                     # row[16] is cost - rescale by dividing by 1500
-                    cost = row[16] / 1500. 
+                    cost = row[24] / 1500. 
                     proj_price.append(cost)
 
                     grade_category.append(grade_one_hot)
@@ -129,6 +130,7 @@ class DataGenerator():
 
             except:
                 continue
+        #print([np.array(grade_category), np.array(subject_category), np.array(subject_subcategory), np.array(project_title), np.array(essay_1), np.array(essay_2), np.array(resource), np.array(proj_price)], np.array(y))
         return [np.array(grade_category), np.array(subject_category), np.array(subject_subcategory), np.array(project_title), np.array(essay_1), np.array(essay_2), np.array(resource), np.array(proj_price)], np.array(y)
 
 
