@@ -23,7 +23,7 @@ img_channels = 3
 # network params
 #
 
-cardinality = 1
+cardinality = 32
 L2_regularizer = 0.01
 
 def residual_network(x):
@@ -49,7 +49,7 @@ def residual_network(x):
         # and convolutions are separately performed within each group
         groups = []
         for j in range(cardinality):
-            group = layers.Lambda(lambda z: z[:, :, :, j * _d:j * _d + _d])(y)
+            group = layers.Lambda(lambda z: z[:, :, j * _d:j * _d + _d])(y)
             groups.append(layers.Conv1D(_d, kernel_size=3, strides=_strides, padding='same', kernel_regularizer=regularizers.l2(L2_regularizer))(group))
             
         # the grouped convolutional layer concatenates them as the outputs of the layer
@@ -121,6 +121,4 @@ def residual_network(x):
         x = residual_block(x, 512, 512, _strides=strides)
 
     x = layers.GlobalAveragePooling1D()(x)
-    x = layers.Dense(8, activation='relu')(x)
-
     return x
