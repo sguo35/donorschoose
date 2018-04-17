@@ -23,7 +23,7 @@ img_channels = 3
 # network params
 #
 
-cardinality = 32
+cardinality = 4
 L2_regularizer = 0.01
 
 def residual_network(x):
