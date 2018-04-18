@@ -35,7 +35,7 @@ clr = CyclicLR(base_lr=0.01, max_lr=0.05,
 						step_size=200., mode='triangular2')
 
 from keras.callbacks import ModelCheckpoint
-checkpointer = ModelCheckpoint(filepath='./weights.h5', verbose=1, save_best_only=True)
+checkpointer = ModelCheckpoint(filepath='./model2.h5', verbose=1, save_best_only=True)
 
 import keras.backend as K
 # experimental ranking loss
@@ -49,8 +49,8 @@ def ranking_loss(y_true, y_pred):
 generator = DataGenerator(pandasFile=train_data, batch_size=32)
 valid_gen = DataGenerator(pandasFile=valid_data, batch_size=32)
 model.compile(optimizer=optimizers.sgd(nesterov=True, lr=0.01),
-			  loss=ranking_loss,
+			  loss='categorical_crossentropy',
 			  metrics=[auc_roc, 'acc'])
-model.fit_generator(generator=generator.gen_data(), use_multiprocessing=True, workers=4, epochs=5, steps_per_epoch=generator.__len__(), validation_data=valid_gen.gen_data(), validation_steps=valid_gen.__len__(), callbacks=[clr, checkpointer])
+model.fit_generator(generator=generator.gen_data(), use_multiprocessing=True, workers=4, epochs=1, steps_per_epoch=generator.__len__(), validation_data=valid_gen.gen_data(), validation_steps=valid_gen.__len__(), callbacks=[clr, checkpointer])
 
 model.save('./model.h5')
