@@ -14,6 +14,7 @@ valid_data = data[-1000:]
 
 import tensorflow as tf
 def auc_roc(y_true, y_pred):
+	#print(y_pred)
 	# any tensorflow metric
 	value, update_op = tf.contrib.metrics.streaming_auc(y_pred, y_true)
 
@@ -37,19 +38,18 @@ from keras.callbacks import ModelCheckpoint
 checkpointer = ModelCheckpoint(filepath='./weights.h5', verbose=1, save_best_only=True)
 
 import keras.backend as K
-# experimental focal loss - see https://arxiv.org/pdf/1708.02002.pdf
-def focal_loss(gamma=2., alpha=.25):
-	def focal_loss_fixed(y_true, y_pred):
-		pt_1 = tf.where(tf.equal(y_true, 1), y_pred, tf.ones_like(y_pred))
-		pt_0 = tf.where(tf.equal(y_true, 0), y_pred, tf.zeros_like(y_pred))
-		return -K.sum(alpha * K.pow(1. - pt_1, gamma) * K.log(pt_1))-K.sum((1-alpha) * K.pow( pt_0, gamma) * K.log(1. - pt_0))
-	return focal_loss_fixed
+# experimental ranking loss
+def ranking_loss(y_true, y_pred):
+    pos = y_pred[:,0]
+    neg = y_pred[:,1]
+    loss = -K.sigmoid(pos-neg) # use loss = K.maximum(1.0 + neg - pos, 0.0) if you want to use margin ranking loss
+    return K.mean(loss) + 0 * y_true
 
 
 generator = DataGenerator(pandasFile=train_data, batch_size=32)
 valid_gen = DataGenerator(pandasFile=valid_data, batch_size=32)
 model.compile(optimizer=optimizers.sgd(nesterov=True, lr=0.01),
-			  loss=focal_loss(),
+			  loss=ranking_loss,
 			  metrics=[auc_roc, 'acc'])
 model.fit_generator(generator=generator.gen_data(), use_multiprocessing=True, workers=4, epochs=5, steps_per_epoch=generator.__len__(), validation_data=valid_gen.gen_data(), validation_steps=valid_gen.__len__(), callbacks=[clr, checkpointer])
 
