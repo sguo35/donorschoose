@@ -39,7 +39,7 @@ train_data = data[:1500]
 valid_data = data[-100:]
 
 generator = DataGenerator(pandasFile=data, batch_size=32)
-results = model.predict_generator(generator=generator.gen_data(), use_multiprocessing=True, workers=4, steps=generator.__len__(), verbose=1)
+results = model.predict_generator(generator=generator.gen_data(), use_multiprocessing=False, workers=1, steps=generator.__len__(), verbose=1)
 import numpy
 a = numpy.asarray(results)
 numpy.savetxt("./results.csv", results, delimiter=",")
